@@ -1,0 +1,86 @@
+{
+  "name": "mytomorrows",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "app",
+  "sourceRoot": "apps/mytomorrows/src",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@angular-devkit/build-angular:application",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/mytomorrows",
+        "index": "apps/mytomorrows/src/index.html",
+        "browser": "apps/mytomorrows/src/main.ts",
+        "polyfills": ["zone.js"],
+        "tsConfig": "apps/mytomorrows/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "apps/mytomorrows/public"
+          }
+        ],
+        "styles": ["apps/mytomorrows/src/styles.scss"],
+        "scripts": [],
+        "server": "apps/mytomorrows/src/main.server.ts",
+        "prerender": true,
+        "ssr": {
+          "entry": "apps/mytomorrows/server.ts"
+        }
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "1mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "2kb",
+              "maximumError": "4kb"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "configurations": {
+        "production": {
+          "buildTarget": "mytomorrows:build:production"
+        },
+        "development": {
+          "buildTarget": "mytomorrows:build:development"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "buildTarget": "mytomorrows:build"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/mytomorrows/jest.config.ts"
+      }
+    }
+  }
+}
