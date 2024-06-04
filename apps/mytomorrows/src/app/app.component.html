@@ -1,1 +1,35 @@
 <router-outlet></router-outlet>
+@if (studiesResponse$ | async) {
+  @for (studyResponse of studiesResponse$ | async; track studyResponse.nextPageToken) {
+    @for (study of studyResponse.studies; track study.protocolSection.identificationModule.nctId) {
+      <mat-expansion-panel hideToggle expanded="false">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <div style="display: flex; width: 100%;">
+              <div style="width: 30%; line-height: 40px;">
+                {{ study.protocolSection.identificationModule.nctId }}
+              </div>
+              <div style="display: flex; width: 70%;">
+                <label style="line-height: 40px; font-weight: normal;"> Overall Status:</label>&nbsp; 
+                <mat-chip-set aria-label="Overall Status">
+                  <mat-chip>{{ study.protocolSection.statusModule.overallStatus }}</mat-chip>
+                </mat-chip-set>
+              </div>
+            </div>
+          </mat-panel-title>
+          <mat-panel-description>
+            <div style="display: flex; width: 100%;">
+              <div style="width:75%">
+                <label style="font-weight: normal;display: block;text-overflow: ellipsis;white-space: nowrap; overflow: hidden;">{{ study.protocolSection.identificationModule.briefTitle }}</label>
+              </div>
+              <div style="width: 25%; font-weight: normal;">
+                First Submit Date: {{ study.protocolSection.statusModule.studyFirstSubmitDate }}
+              </div>
+            </div>
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        {{ study.protocolSection.identificationModule.briefTitle }}
+      </mat-expansion-panel>
+    }
+ } @empty { Empty list of users } 
+}

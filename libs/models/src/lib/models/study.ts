@@ -1,26 +1,37 @@
 export interface Study {
-  protocolSection: IdentificationModule;
-  statusModule: StatusModule;
-  hasResults: boolean;
+  protocolSection: ProtocolSection;
 }
 
-export interface StatusModule {
-  completionDateStruct: {
-    date: Date;
-  };
-  overallStatus: string;
-  startDateStruct: {
-    date: Date;
-  };
+export interface ProtocolSection {
+  identificationModule: IdentificationModule;
+  statusModule: StatusModule;
 }
 
 export interface IdentificationModule {
-  ntcId: number;
+  nctId: string;
   briefTitle: string;
 }
 
+export interface StatusModule {
+  overallStatus: string;
+  startDateStruct: DateStruct;
+  completionDateStruct: DateStruct;
+  studyFirstSubmitDate: string;
+}
+
+export interface DateStruct {
+  date: string;
+}
+
 export interface StudiesResponse {
-  totalCount: number;
   nextPageToken: string;
   studies: Study[];
+}
+
+export interface StudyFlat {
+  ntcId: string;
+  startDate: Date;
+  briefTitle: string;
+  overallStatus: string;
+  completionDate: Date;
 }
