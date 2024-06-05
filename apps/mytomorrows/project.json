@@ -30,12 +30,7 @@
           "@angular/material/prebuilt-themes/azure-blue.css",
           "apps/mytomorrows/src/styles.scss"
         ],
-        "scripts": [],
-        "server": "apps/mytomorrows/src/main.server.ts",
-        "prerender": true,
-        "ssr": {
-          "entry": "apps/mytomorrows/server.ts"
-        }
+        "scripts": []
       },
       "configurations": {
         "production": {
