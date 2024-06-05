@@ -16,7 +16,6 @@
     </a>
   </div>
 </mat-toolbar>
-
 <router-outlet></router-outlet>
 @for (study of studiesFlat$ | async; track study) {
 <mat-expansion-panel expanded="false">
@@ -29,27 +28,27 @@
         <div style="display: flex; width: 75%">
           <label style="font-weight: normal"> First Submit Date: </label>&nbsp;
           {{ study.studyFirstSumbmitDate }}
-          <!-- <mat-chip-set aria-label="Overall Status">
-            <mat-chip>{{ study.overallStatus }}</mat-chip>
-          </mat-chip-set> -->
         </div>
       </div>
     </mat-panel-title>
     <mat-panel-description>
       <div style="display: flex; width: 100%">
-        <div style="width: 33%">
+        <div style="width: 25%">
           <label style="line-height: 40px; font-weight: normal">
             Completion Date: {{ study.completionDate }}</label
           >
         </div>
-        <div style="width: 33%; font-weight: normal; line-height: 40px">
+        <div style="width: 25%; font-weight: normal; line-height: 40px">
           Start Date: {{ study.startDate }}
         </div>
-        <div style="width: 33%; line-height: 40px; display: flex">
+        <div style="width: 25%; line-height: 40px; display: flex">
           <label style="line-height: 40px">Status: &nbsp; </label>
           <mat-chip-set aria-label="Overall Status">
             <mat-chip color="warn">{{ study.overallStatus }}</mat-chip>
           </mat-chip-set>
+        </div>
+        <div style="width: 25%; line-height: 40px; display: flex">
+          <button mat-button raised color="accent">Add to Favorites</button>
         </div>
       </div>
     </mat-panel-description>

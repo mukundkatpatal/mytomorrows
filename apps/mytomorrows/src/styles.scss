@@ -1,32 +1,11 @@
 @use '@angular/material' as mat;
-
-/* You can add global styles to this file, and also import other style files */
-@include mat.core();
-$theme: mat.define-theme(
-  (
-    color: (
-      theme-type: 'light',
-      primary: mat.$azure-palette,
-      tertiary: mat.$blue-palette,
-      use-system-variables: true,
-    ),
-    typography: (
-      brand-family: 'Comic Sans',
-      bold-weight: 900,
-    ),
-    density: (
-      scale: -1,
-    ),
-  )
-);
-
-:root {
-  @include mat.all-component-themes($theme);
-}
+@use "./light-theme";
 
 html,
 body {
   height: 100%;
+  @include mat.core();
+  @include mat.button-theme(light-theme.$theme);
 }
 body {
   margin: 0;

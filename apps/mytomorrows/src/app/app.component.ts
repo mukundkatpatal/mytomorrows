@@ -4,9 +4,10 @@ import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 import { BehaviorSubject, Observable, from, map, mergeMap, toArray } from 'rxjs';
-import { MatChipsModule} from '@angular/material/chips';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatExpansionModule } from '@angular/material/expansion';
-import {MatToolbarModule} from '@angular/material/toolbar';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonModule } from '@angular/material/button';
 
 import { StudiesResponse, StudyFlat } from '@myt/models';
 import { ApiclientService } from '@myt/services';
@@ -15,7 +16,7 @@ import { environment } from './app.config';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, RouterModule, MatChipsModule, MatExpansionModule, MatToolbarModule],
+  imports: [CommonModule, RouterModule, MatChipsModule, MatExpansionModule, MatToolbarModule, MatButtonModule],
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
