@@ -16,7 +16,7 @@ export interface StatusModule {
   overallStatus: string;
   startDateStruct: DateStruct;
   completionDateStruct: DateStruct;
-  studyFirstSubmitDate: string;
+  studyFirstSubmitDate: Date;
 }
 
 export interface DateStruct {
@@ -34,4 +34,5 @@ export interface StudyFlat {
   briefTitle: string;
   overallStatus: string;
   completionDate: Date;
+  studyFirstSumbmitDate: Date;
 }

@@ -3,19 +3,19 @@ import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
-import { BehaviorSubject, Observable, from, map, merge, mergeMap, pipe, tap, toArray } from 'rxjs';
+import { BehaviorSubject, Observable, from, map, mergeMap, toArray } from 'rxjs';
 import { MatChipsModule} from '@angular/material/chips';
 import { MatExpansionModule } from '@angular/material/expansion';
+import {MatToolbarModule} from '@angular/material/toolbar';
 
 import { StudiesResponse, StudyFlat } from '@myt/models';
 import { ApiclientService } from '@myt/services';
 
 import { environment } from './app.config';
-// import { subscribe } from 'diagnostics_channel';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, RouterModule, MatChipsModule, MatExpansionModule],
+  imports: [CommonModule, RouterModule, MatChipsModule, MatExpansionModule, MatToolbarModule],
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
@@ -38,7 +38,8 @@ export class AppComponent implements OnInit {
         ntcId: k.protocolSection.identificationModule.nctId,
         completionDate: k?.protocolSection?.statusModule?.completionDateStruct?.date,
         overallStatus: k.protocolSection.statusModule.overallStatus,
-        startDate: k?.protocolSection?.statusModule?.startDateStruct?.date
+        startDate: k?.protocolSection?.statusModule?.startDateStruct?.date,
+        studyFirstSumbmitDate:  k?.protocolSection?.statusModule?.studyFirstSubmitDate
       } as StudyFlat
     }))),
     mergeMap(arrays => from(arrays).pipe(
