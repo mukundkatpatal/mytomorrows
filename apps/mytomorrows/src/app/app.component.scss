@@ -1,1 +1,9 @@
-@use "@angular/material" as mat;
+.mat-toolbar-row, .mat-toolbar-single-row {
+    background-color: var(--sys-primary-fixed-dim);
+    justify-content: center;
+}
+
+label {
+    font-weight: normal;
+    line-height: 40px;
+}

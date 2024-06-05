@@ -6,8 +6,8 @@ body {
   height: 100%;
   @include mat.core();
   @include mat.button-theme(light-theme.$theme);
-}
-body {
+  @include mat.toolbar-theme(light-theme.$theme);
+  @include mat.system-level-colors(light-theme.$theme);
   margin: 0;
   font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
