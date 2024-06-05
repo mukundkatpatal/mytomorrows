@@ -20,7 +20,7 @@ export interface StatusModule {
 }
 
 export interface DateStruct {
-  date: string;
+  date: Date;
 }
 
 export interface StudiesResponse {
