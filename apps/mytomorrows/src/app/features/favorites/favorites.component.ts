@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -6,7 +6,7 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { StudyFlat } from '@myt/models';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { FavoritesService } from '@myt/services';
+import { FAVORITES_SERVICE_TOKEN, FavoritesServiceArrayStore, IFavoritesService } from '@myt/services';
 @Component({
   selector: 'myt-favorites',
   standalone: true,
@@ -14,6 +14,7 @@ import { FavoritesService } from '@myt/services';
   templateUrl: './favorites.component.html',
   styleUrl: './favorites.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [{provide: FAVORITES_SERVICE_TOKEN, useExisting: FavoritesServiceArrayStore}]
 })
 export class FavoritesComponent {
   public displayedColumns: string[] = [
@@ -23,7 +24,7 @@ export class FavoritesComponent {
   /**
    *
    */
-  constructor(private readonly favoritesService: FavoritesService) {
+  constructor(@Inject(FAVORITES_SERVICE_TOKEN)private readonly favoritesService: IFavoritesService) {
     
     this.dataSource = new  MatTableDataSource<StudyFlat>(this.favoritesService.favorites);
   }
