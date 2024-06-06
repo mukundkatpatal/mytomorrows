@@ -1,16 +1,19 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, InjectionToken } from '@angular/core';
 import { Observable, forkJoin, map } from 'rxjs';
 
 import { StudiesResponse } from '@myt/models';
 import * as datesutils from './dates.utils';
 
-@Injectable({
-  providedIn: 'root',
-})
-export class ApiclientService {
+export interface IApiClientService {
+  getRandomStudies(apiUrl: string): Observable<StudiesResponse[]>;
+}
+
+export const STUDIES_SERVICE_TOKEN = new InjectionToken<IApiClientService>('IStudiesService');
+@Injectable()
+export class ApiclientService implements IApiClientService {
   constructor(private readonly httpClient: HttpClient) {}
-  public getStudy(
+  private getStudy(
     apiUrl: string,
     fromDate: string,
     toDate: string

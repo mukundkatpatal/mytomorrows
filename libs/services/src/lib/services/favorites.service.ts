@@ -1,10 +1,18 @@
-import { Injectable } from "@angular/core";
+import { Injectable, InjectionToken } from "@angular/core";
 import { StudyFlat } from "@myt/models";
 
+export interface IFavoritesService {
+    get favorites(): StudyFlat[];
+    removeFavorite(study: StudyFlat): void;
+    addFavorite(study: StudyFlat, maxCount?: number): boolean
+}
+
+export const FAVORITES_SERVICE_TOKEN = new InjectionToken<IFavoritesService>('IFavoritesService');
+
 @Injectable({
-  providedIn: 'root',
-})
-export class FavoritesService {
+    providedIn: 'root',
+  })
+export class FavoritesServiceArrayStore implements IFavoritesService {
     private _favoriteStudies: Array<StudyFlat> = [];
 
     public get favorites(): Array<StudyFlat> {
