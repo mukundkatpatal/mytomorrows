@@ -1,6 +1,4 @@
 import { Route } from '@angular/router';
-
-// import { StudiesListComponent } from './features/studies/studies-list.component.component'
 export const appRoutes: Route[] = [
     {
         path: 'studies',
@@ -8,6 +6,15 @@ export const appRoutes: Route[] = [
           import('./features/studies/studies-list.component').then(
             (c) => c.StudiesListComponent
           ),
-          title: 'Dashboard'
+          title: 'Studies'
       },
+      {
+        path: 'favorites',
+        loadComponent: () =>
+          import('./features/favorites/favorites.component').then(
+            (c) => c.FavoritesComponent
+          ),
+          title: 'Studies'
+      },
+
 ];

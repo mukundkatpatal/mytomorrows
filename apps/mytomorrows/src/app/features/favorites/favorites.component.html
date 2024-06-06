@@ -1,0 +1,44 @@
+<div class="mat-elevation-z8">
+    <mat-table [dataSource]="dataSource">  
+      <ng-container matColumnDef="NTC ID">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>NTC ID</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element.ntcId}}</mat-cell>
+      </ng-container>
+
+      <!-- Completion Date Column -->
+      <ng-container matColumnDef="Completion">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Completion Date </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.completionDate | date:'dd/MM/yyyy'}} </mat-cell>
+      </ng-container>
+  
+      
+      <!-- Start Date Column -->
+      <ng-container matColumnDef="Start Date">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Start Date </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.startDate | date:'dd/MM/yyyy'}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="First Submitted">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> First Submitted </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.studyFirstSumbmitDate | date:'dd/MM/yyyy'}} </mat-cell>
+      </ng-container>
+
+      <!-- Overall Status Column -->
+      <ng-container matColumnDef="Overall Status">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Overall Status </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.overallStatus}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="Remove From Favorites">
+        <mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;text-align: center;">Remove From Favorites</mat-header-cell>
+        <mat-cell *matCellDef="let element" style="justify-content: center;text-align: center;"> 
+            <mat-icon aria-hidden="false" color="warn" class="hover-icon" aria-label="Example home icon" fontIcon="delete">
+            </mat-icon>
+        </mat-cell>
+      </ng-container>
+  
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+
+    </mat-table>
+  </div>
+  

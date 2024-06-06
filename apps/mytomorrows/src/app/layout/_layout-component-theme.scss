@@ -1,6 +1,11 @@
 @use "@angular/material" as mat;
 
 @mixin theme($theme) {
+
+  .active-link {
+    background-color:mat.get-theme-color($theme, primary)!important;
+    color: mat.get-theme-color($theme, tertiary-container)!important;;
+  }
   .mat-toolbar {
     background-color: mat.get-theme-color($theme, secondary-container);
   }
@@ -8,7 +13,7 @@
     -webkit-tap-highlight-color: mat.get-theme-color($theme, secondary-container);
   }
   .sidenav-scroll-wrapper {
-    background-color: rgba(mat.get-theme-color($theme, primary-container), 0.10);
+    background-color: rgba(mat.get-theme-color($theme, primary-container), 0.75);
   }
   .sidenav-content {
     // 

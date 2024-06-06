@@ -54,7 +54,7 @@ export class StudiesListComponent implements OnInit {
       mergeMap(innerArray => from(innerArray)),
       toArray()
     )));
-    
+    this.studiesFlat$.subscribe(x => console.log(x));
   }
 
   private get clinicalTrialApiUrl(): string {

@@ -3,8 +3,8 @@
     <mat-toolbar color="primary" style="display: flex;">
       <div style="display: flex;width: 100%;">
         <div style="width: 45%;">
-          <a mat-raised-button>Trials List</a> &nbsp;
-          <a mat-raised-button>Favorites</a>
+          <a mat-raised-button routerLink="studies" routerLinkActive="active-link">Trials List</a> &nbsp;
+          <a mat-raised-button routerLink="favorites" routerLinkActive="active-link">Favorites</a>
         </div>
         <div style="width: 55%;">
           <a href="https://wordpress.mytomorrows.com" class="logo">
@@ -12,12 +12,10 @@
           </a>
         </div>
       </div>
-      
-      
     </mat-toolbar>
     <div class="sidenav-scroll-wrapper">
       <div class="sidenav-content">
-        <ng-content></ng-content>
+        <router-outlet></router-outlet>
       </div>
     </div>
   </mat-sidenav-content>
