@@ -6,11 +6,7 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { StudyFlat } from '@myt/models';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-
-  export const data: Array<StudyFlat> = [
-  
-  ];
-
+import { FavoritesService } from '@myt/services';
 @Component({
   selector: 'myt-favorites',
   standalone: true,
@@ -22,6 +18,19 @@ import { MatIconModule } from '@angular/material/icon';
 export class FavoritesComponent {
   public displayedColumns: string[] = [
     'NTC ID', 'Completion', 'Overall Status', 'Start Date', 'First Submitted', 'Remove From Favorites'];
-  public dataSource = new MatTableDataSource<StudyFlat>(data);
+  public dataSource!: MatTableDataSource<StudyFlat>;
+
+  /**
+   *
+   */
+  constructor(private readonly favoritesService: FavoritesService) {
+    
+    this.dataSource = new  MatTableDataSource<StudyFlat>(this.favoritesService.favorites);
+  }
+
+  public onRemoveFavorite(study: StudyFlat): void {
+   this.favoritesService.removeFavorite(study);
+   this.dataSource.data = this.favoritesService.favorites;
+  }
 
 }

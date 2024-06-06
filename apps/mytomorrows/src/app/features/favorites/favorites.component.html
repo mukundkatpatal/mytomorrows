@@ -31,7 +31,13 @@
       <ng-container matColumnDef="Remove From Favorites">
         <mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;text-align: center;">Remove From Favorites</mat-header-cell>
         <mat-cell *matCellDef="let element" style="justify-content: center;text-align: center;"> 
-            <mat-icon aria-hidden="false" color="warn" class="hover-icon" aria-label="Example home icon" fontIcon="delete">
+            <mat-icon 
+                aria-hidden="false"
+                color="warn"
+                class="hover-icon"
+                aria-label="delete icon"
+                fontIcon="delete"
+                (click)="onRemoveFavorite(element)">
             </mat-icon>
         </mat-cell>
       </ng-container>

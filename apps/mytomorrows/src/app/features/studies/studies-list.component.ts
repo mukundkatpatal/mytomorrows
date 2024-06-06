@@ -11,7 +11,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 
 import { StudiesResponse, StudyFlat } from '@myt/models';
-import { ApiclientService } from '@myt/services';
+import { ApiclientService, FavoritesService } from '@myt/services';
 
 import { environment } from '../../app.config';
 
@@ -35,7 +35,9 @@ export class StudiesListComponent implements OnInit {
   public studiesSubject = new BehaviorSubject<StudiesResponse[]>([]);
   public studiesFlat$!: Observable<StudyFlat[]>; 
 
-  constructor(private readonly service: ApiclientService) {  
+  constructor(private readonly service: ApiclientService,
+    private readonly favoritesService: FavoritesService
+  ) {  
   }
 
   public ngOnInit(): void {
@@ -54,7 +56,12 @@ export class StudiesListComponent implements OnInit {
       mergeMap(innerArray => from(innerArray)),
       toArray()
     )));
-    this.studiesFlat$.subscribe(x => console.log(x));
+    // this.studiesFlat$.subscribe(x => console.log(x));
+  }
+
+  public onAddToFavorite(study: StudyFlat, $event: MouseEvent): void {
+    this.favoritesService.addFavorite(study);
+    $event.stopPropagation();
   }
 
   private get clinicalTrialApiUrl(): string {

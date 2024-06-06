@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, forkJoin, map, tap } from 'rxjs';
+import { Observable, forkJoin, map } from 'rxjs';
 
-import { StudiesResponse, Study, StudyFlat } from '@myt/models';
+import { StudiesResponse } from '@myt/models';
 import * as datesutils from './dates.utils';
 
 @Injectable({
