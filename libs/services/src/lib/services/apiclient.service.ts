@@ -22,9 +22,9 @@ export class ApiclientService implements IApiClientService {
     return this.httpClient.get<StudiesResponse>(apiUrl).pipe(map((response: StudiesResponse) => response));
   }
 
-  public getRandomStudies(apiUrl: string): Observable<StudiesResponse[]> {
+  public getRandomStudies(apiUrl: string, maxRange = 10): Observable<StudiesResponse[]> {
     const requests = datesutils
-      .generateDateRanges()
+      .generateDateRanges(undefined, undefined, maxRange)
       .map((x) => this.getStudy(apiUrl, x[0], x[1]));
     return forkJoin(requests);
   }

@@ -10,7 +10,7 @@ export function formatDate(date: Date): string {
 }
 
 export function generateDateRanges(startDate: Date = new Date(1999, 8, 17),
-    endDate: Date = new Date()): string[][] {
+    endDate: Date = new Date(), maxRange = 10): string[][] {
 
   const oneDay = 24 * 60 * 60 * 1000;
   const totalDays = Math.floor(
@@ -20,7 +20,7 @@ export function generateDateRanges(startDate: Date = new Date(1999, 8, 17),
   const ranges: string[][] = [];
   const chosenStartDays = new Set<number>();
 
-  while (ranges.length < 10) {
+  while (ranges.length < maxRange) {
     const randomStartDay = getRandomInt(0, totalDays - 31);
     if (!chosenStartDays.has(randomStartDay)) {
       chosenStartDays.add(randomStartDay);

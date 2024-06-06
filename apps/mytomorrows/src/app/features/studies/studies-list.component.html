@@ -1,6 +1,10 @@
-<div style="padding: 20px; display: flex; flex-direction: column">
+<div style="padding-bottom: 5x; display: flex; flex-direction: column">
+  <div>
+    <mat-slide-toggle color="tertiary" [checked]="checked" (change)="onToggleChange($event)"> &nbsp;Fetch new studies every 5 seconds.</mat-slide-toggle>
+  </div>
   @for (study of studiesFlat$ | async; track study) {
-  <mat-expansion-panel expanded="false">
+  <div style="padding: 5px;"></div>
+    <mat-expansion-panel expanded="false">
     <mat-expansion-panel-header>
       <mat-panel-title>
         <div style="display: flex; width: 100%">
@@ -40,6 +44,6 @@
     </mat-expansion-panel-header>
     {{ study.briefTitle }}
   </mat-expansion-panel>
-  <br />
+  
   } @empty { Empty list of Trials }
 </div>
