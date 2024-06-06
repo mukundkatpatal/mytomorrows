@@ -1,0 +1,21 @@
+@use "@angular/material" as mat;
+
+@mixin theme($theme) {
+  .mat-toolbar {
+    background-color: mat.get-theme-color($theme, secondary-container);
+  }
+  .mat-mdc-list-item {
+    -webkit-tap-highlight-color: mat.get-theme-color($theme, secondary-container);
+  }
+  .sidenav-scroll-wrapper {
+    background-color: rgba(mat.get-theme-color($theme, primary-container), 0.10);
+  }
+  .sidenav-content {
+    // 
+    @media (pointer: fine) {
+      &::-webkit-scrollbar-thumb {
+        background-color: mat.get-theme-color($theme, surface-container-low);
+      }
+    }
+  }
+}

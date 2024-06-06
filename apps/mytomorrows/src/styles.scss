@@ -1,13 +1,14 @@
 @use '@angular/material' as mat;
 @use "./light-theme";
+@use "./app/layout/layout-component-theme";
 
 html,
 body {
   height: 100%;
   @include mat.core();
-  @include mat.button-theme(light-theme.$theme);
-  @include mat.toolbar-theme(light-theme.$theme);
+  @include mat.all-component-themes(light-theme.$theme);
   @include mat.system-level-colors(light-theme.$theme);
+  @include layout-component-theme.theme(light-theme.$theme);
   margin: 0;
   font-family: Roboto, 'Helvetica Neue', sans-serif;
 }

@@ -1,0 +1,39 @@
+<div style="padding: 20px; display: flex; flex-direction: column">
+    @for (study of studiesFlat$ | async; track study) {
+    <mat-expansion-panel expanded="false">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <div style="display: flex; width: 100%">
+            <label style="width: 25%">
+              {{ study.ntcId }}
+            </label>
+            <div style="display: flex; width: 75%">
+              <label>First Submit Date: {{ study.studyFirstSumbmitDate }}</label>
+            </div>
+          </div>
+        </mat-panel-title>
+        <mat-panel-description>
+          <div style="display: flex; width: 100%">
+            <div style="width: 25%">
+              <label>Completion Date: {{ study.completionDate }}</label>
+            </div>
+            <div style="width: 25%">
+              <label>Start Date: {{ study.startDate }}</label>
+            </div>
+            <div style="width: 25%; line-height: 40px; display: flex">
+              <label>Status: &nbsp; </label>
+              <mat-chip-set aria-label="Overall Status">
+                <mat-chip color="warn">{{ study.overallStatus }}</mat-chip>
+              </mat-chip-set>
+            </div>
+            <div style="width: 25%; display: flex">
+              <button mat-raised-button color="accent">Add to Favorites</button>
+            </div>
+          </div>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      {{ study.briefTitle }}
+    </mat-expansion-panel>
+    <br />
+    } @empty { Empty list of Trials }
+  </div>
