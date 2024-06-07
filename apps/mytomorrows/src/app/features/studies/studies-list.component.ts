@@ -19,19 +19,21 @@ import {
   map,
   mergeMap,
   switchMap,
+  tap,
   toArray,
 } from 'rxjs';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatIconModule } from '@angular/material/icon';
 import {
   MatSlideToggleChange,
   MatSlideToggleModule,
 } from '@angular/material/slide-toggle';
 
-import { StudiesResponse, Study, StudyFlat } from '@myt/models';
+import { StudiesResponse, Study, StudyFlat, StudyListState } from '@myt/models';
 import {
   FAVORITES_SERVICE_TOKEN,
   FavoritesServiceArrayStore,
@@ -54,7 +56,8 @@ import { environment } from '../../app.config';
     MatToolbarModule,
     MatButtonModule,
     MatSlideToggleModule,
-    MatIconModule
+    MatIconModule,
+    MatProgressBarModule
   ],
   templateUrl: './studies-list.component.html',
   styleUrl: './studies-list.component.scss',
@@ -69,9 +72,15 @@ import { environment } from '../../app.config';
   ],
 })
 export class StudiesListComponent implements OnInit, OnDestroy {
-  public studiesSubject = new BehaviorSubject<StudyFlat[]>([]);
-  public studiesFlat$ = this.studiesSubject.asObservable();
   private intervalSubscription?: Subscription;
+
+  private state: StudyListState = {
+    loading: false,
+    data: [],
+    error: ''
+  };
+  private readonly stateSubject = new BehaviorSubject<StudyListState>(this.state);
+  public studiesListState$ = this.stateSubject.asObservable();
 
   constructor(
     @Inject(STUDIES_SERVICE_TOKEN) private readonly service: IStudiesService,
@@ -80,21 +89,23 @@ export class StudiesListComponent implements OnInit, OnDestroy {
   ) {}
 
   public ngOnInit(): void {
+    this.stateSubject.next({ ...this.state, loading: true });
     this.service
       .getRandomStudies(this.clinicalTrialApiUrl)
       .pipe(this.flattenStudies())
       .subscribe((studiesFlat: StudyFlat[]) => {
-        this.studiesSubject.next(studiesFlat);
+        this.stateSubject.next({ data: studiesFlat, loading: false, error: '' });
       });
-    this.studiesFlat$ = this.studiesSubject.asObservable();
+    this.studiesListState$ = this.stateSubject.asObservable();
+    this.studiesListState$.subscribe(x => console.log(x));
   }
 
   public onAddToFavorite(study: StudyFlat, $event: MouseEvent): void {
     this.favoritesService.addFavorite(study);
-    this.studiesSubject.next(
-      this.studiesSubject.value.map((x) =>
+    this.stateSubject.next({
+      ...this.stateSubject.value, data: this.stateSubject.value.data.map((x) =>
         study.ntcId === x.ntcId ? { ...x, favorite: true } : x)
-    );
+    });
     $event.stopPropagation();
   }
 
@@ -102,17 +113,18 @@ export class StudiesListComponent implements OnInit, OnDestroy {
     if ($event.checked) {
       this.intervalSubscription = interval(3000)
         .pipe(
+          tap(() => this.stateSubject.next({...this.stateSubject.value,loading: true})),
           switchMap(() =>
             this.service.getRandomStudies(this.clinicalTrialApiUrl, 1)
           ),
           this.flattenStudies()
         )
         .subscribe((x) => {
-          const currentvalues = this.studiesSubject.value;
+          const currentvalues = this.stateSubject.value.data;
           if (currentvalues.length > 1) {
             currentvalues.pop();
             currentvalues.unshift(x[0]);
-            this.studiesSubject.next(currentvalues);
+            this.stateSubject.next({...this.stateSubject.value, data: currentvalues, loading: false});
           }
         });
     } else {

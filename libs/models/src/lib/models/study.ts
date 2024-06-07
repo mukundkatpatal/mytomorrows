@@ -37,3 +37,9 @@ export interface StudyFlat {
   studyFirstSumbmitDate: Date;
   favorite?: boolean;
 }
+
+export interface StudyListState {
+  loading: boolean;
+  error: string;
+  data: StudyFlat[];
+}
