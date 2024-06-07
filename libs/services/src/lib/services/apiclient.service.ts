@@ -5,13 +5,13 @@ import { Observable, forkJoin, map } from 'rxjs';
 import { StudiesResponse } from '@myt/models';
 import * as datesutils from './dates.utils';
 
-export interface IApiClientService {
-  getRandomStudies(apiUrl: string): Observable<StudiesResponse[]>;
+export interface IStudiesService {
+  getRandomStudies(apiUrl: string, maxRange?: number): Observable<StudiesResponse[]>;
 }
 
-export const STUDIES_SERVICE_TOKEN = new InjectionToken<IApiClientService>('IStudiesService');
+export const STUDIES_SERVICE_TOKEN = new InjectionToken<IStudiesService>('IStudiesService');
 @Injectable()
-export class ApiclientService implements IApiClientService {
+export class ApiClientService implements IStudiesService {
   constructor(private readonly httpClient: HttpClient) {}
   private getStudy(
     apiUrl: string,
