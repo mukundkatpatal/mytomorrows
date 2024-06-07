@@ -19,22 +19,25 @@ import {
   map,
   mergeMap,
   switchMap,
-  tap,
   toArray,
 } from 'rxjs';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
-import { MatSlideToggleChange, MatSlideToggleModule } from '@angular/material/slide-toggle';
-
-import { StudyFlat } from '@myt/models';
 import {
-  ApiclientService,
+  MatSlideToggleChange,
+  MatSlideToggleModule,
+} from '@angular/material/slide-toggle';
+
+import { StudiesResponse, Study, StudyFlat } from '@myt/models';
+import {
   FAVORITES_SERVICE_TOKEN,
   FavoritesServiceArrayStore,
+  ApiClientService,
   IFavoritesService,
   STUDIES_SERVICE_TOKEN,
+  IStudiesService,
 } from '@myt/services';
 
 import { environment } from '../../app.config';
@@ -48,14 +51,18 @@ import { environment } from '../../app.config';
     MatExpansionModule,
     MatToolbarModule,
     MatButtonModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
   ],
   templateUrl: './studies-list.component.html',
   styleUrl: './studies-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [ HttpClient,
-    { provide: FAVORITES_SERVICE_TOKEN, useExisting: FavoritesServiceArrayStore },
-    { provide: STUDIES_SERVICE_TOKEN, useClass: ApiclientService },
+  providers: [
+    HttpClient,
+    {
+      provide: FAVORITES_SERVICE_TOKEN,
+      useExisting: FavoritesServiceArrayStore,
+    },
+    { provide: STUDIES_SERVICE_TOKEN, useClass: ApiClientService },
   ],
 })
 export class StudiesListComponent implements OnInit, OnDestroy {
@@ -64,10 +71,8 @@ export class StudiesListComponent implements OnInit, OnDestroy {
 
   private intervalSubscription?: Subscription;
 
-  public checked = false;
-
   constructor(
-    @Inject(STUDIES_SERVICE_TOKEN) private readonly service: ApiclientService,
+    @Inject(STUDIES_SERVICE_TOKEN) private readonly service: IStudiesService,
     @Inject(FAVORITES_SERVICE_TOKEN)
     private readonly favoritesService: IFavoritesService
   ) {}
@@ -75,10 +80,46 @@ export class StudiesListComponent implements OnInit, OnDestroy {
   public ngOnInit(): void {
     this.service
       .getRandomStudies(this.clinicalTrialApiUrl)
-      .pipe(
-        map((x) =>
-          x.map((y) =>
-            y.studies.map((k) => {
+      .pipe(this.flattenStudies())
+      .subscribe((studiesFlat: StudyFlat[]) => {
+        this.studiesSubject.next(studiesFlat);
+      });
+    this.studiesFlat$ = this.studiesSubject.asObservable();
+  }
+
+  public onAddToFavorite(study: StudyFlat, $event: MouseEvent): void {
+    this.favoritesService.addFavorite(study);
+    $event.stopPropagation();
+  }
+
+  public onToggleChange($event: MatSlideToggleChange): void {
+    if ($event.checked) {
+      this.intervalSubscription = interval(3000)
+        .pipe(
+          switchMap(() =>
+            this.service.getRandomStudies(this.clinicalTrialApiUrl, 1)
+          ),
+          this.flattenStudies()
+        )
+        .subscribe((x) => {
+          const currentvalues = this.studiesSubject.value;
+          if (currentvalues.length > 1) {
+            currentvalues.pop();
+            currentvalues.unshift(x[0]);
+            this.studiesSubject.next(currentvalues);
+          }
+        });
+    } else {
+      this.intervalSubscription?.unsubscribe();
+    }
+  }
+
+  private flattenStudies() {
+    return (source: Observable<StudiesResponse[]>) =>
+      source.pipe(
+        map((x: StudiesResponse[]) =>
+          x.map((y: StudiesResponse) =>
+            y.studies.map((k: Study) => {
               return {
                 briefTitle: k.protocolSection.identificationModule.briefTitle,
                 ntcId: k.protocolSection.identificationModule.nctId,
@@ -99,63 +140,11 @@ export class StudiesListComponent implements OnInit, OnDestroy {
             toArray()
           )
         )
-      ).subscribe((studiesFlat: StudyFlat[]) => {
-        // Update the BehaviorSubject with the new values
-        this.studiesSubject.next(studiesFlat);
-      });
-      this.studiesFlat$ = this.studiesSubject.asObservable();
+      );
   }
 
-  public onAddToFavorite(study: StudyFlat, $event: MouseEvent): void {
-    this.favoritesService.addFavorite(study);
-    $event.stopPropagation();
-  }
-
-  public onToggleChange($event: MatSlideToggleChange): void {
-    console.log($event.checked);
-    if ($event.checked) {
-      this.intervalSubscription = interval(3000).pipe(
-        switchMap(() => this.service.getRandomStudies(this.clinicalTrialApiUrl, 1)))
-        .pipe(
-          map((x) =>
-            x.map((y) =>
-              y.studies.map((k) => {
-                return {
-                  briefTitle: k.protocolSection.identificationModule.briefTitle,
-                  ntcId: k.protocolSection.identificationModule.nctId,
-                  completionDate:
-                    k?.protocolSection?.statusModule?.completionDateStruct?.date,
-                  overallStatus: k.protocolSection.statusModule.overallStatus,
-                  startDate:
-                    k?.protocolSection?.statusModule?.startDateStruct?.date,
-                  studyFirstSumbmitDate:
-                    k?.protocolSection?.statusModule?.studyFirstSubmitDate,
-                } as StudyFlat;
-              })
-            )
-          ),
-          mergeMap((arrays) =>
-            from(arrays).pipe(
-              mergeMap((innerArray) => from(innerArray)),
-              toArray()
-            )
-          )
-        )
-        .subscribe(x => {
-          const currentvalues = this.studiesSubject.value;
-          if (currentvalues.length > 1) {
-            currentvalues.pop();
-            currentvalues.unshift(x[0]);
-            this.studiesSubject.next(currentvalues);
-          }
-        });
-    } else {
-      this.intervalSubscription?.unsubscribe();
-    }
-  }
-
-  public   ngOnDestroy(): void {
-      this.intervalSubscription?.unsubscribe();
+  public ngOnDestroy(): void {
+    this.intervalSubscription?.unsubscribe();
   }
 
   private get clinicalTrialApiUrl(): string {

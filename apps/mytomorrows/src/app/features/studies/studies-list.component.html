@@ -1,6 +1,6 @@
 <div style="padding-bottom: 5x; display: flex; flex-direction: column">
   <div>
-    <mat-slide-toggle color="tertiary" [checked]="checked" (change)="onToggleChange($event)"> &nbsp;Fetch new studies every 5 seconds.</mat-slide-toggle>
+    <mat-slide-toggle color="tertiary" checked="false" (change)="onToggleChange($event)"> &nbsp;Fetch new studies every 5 seconds.</mat-slide-toggle>
   </div>
   @for (study of studiesFlat$ | async; track study) {
   <div style="padding: 5px;"></div>
