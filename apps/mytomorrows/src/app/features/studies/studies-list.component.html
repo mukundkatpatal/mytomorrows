@@ -30,13 +30,15 @@
               <mat-chip color="warn">{{ study.overallStatus }}</mat-chip>
             </mat-chip-set>
           </div>
-          <div style="width: 25%; display: flex">
+          <div style="width: 25%; display: flex; justify-content: center; align-items: center;">
             <button
-              mat-raised-button
+              mat-icon-button
               color="accent"
-              (click)="onAddToFavorite(study, $event)"
+              [disabled]="study.favorite"
+              (click)="onAddToFavorite(study, $event)"   
             >
-              Add to Favorites
+              <mat-icon *ngIf="!study.favorite" color="primary">star_outline</mat-icon>
+              <mat-icon *ngIf="study.favorite" color="primary">star</mat-icon>
             </button>
           </div>
         </div>

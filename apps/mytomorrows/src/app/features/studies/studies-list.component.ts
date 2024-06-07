@@ -25,6 +25,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import {
   MatSlideToggleChange,
   MatSlideToggleModule,
@@ -41,6 +42,7 @@ import {
 } from '@myt/services';
 
 import { environment } from '../../app.config';
+
 @Component({
   selector: 'myt-studies-list',
   standalone: true,
@@ -52,6 +54,7 @@ import { environment } from '../../app.config';
     MatToolbarModule,
     MatButtonModule,
     MatSlideToggleModule,
+    MatIconModule
   ],
   templateUrl: './studies-list.component.html',
   styleUrl: './studies-list.component.scss',
@@ -68,7 +71,6 @@ import { environment } from '../../app.config';
 export class StudiesListComponent implements OnInit, OnDestroy {
   public studiesSubject = new BehaviorSubject<StudyFlat[]>([]);
   public studiesFlat$ = this.studiesSubject.asObservable();
-
   private intervalSubscription?: Subscription;
 
   constructor(
@@ -89,6 +91,10 @@ export class StudiesListComponent implements OnInit, OnDestroy {
 
   public onAddToFavorite(study: StudyFlat, $event: MouseEvent): void {
     this.favoritesService.addFavorite(study);
+    this.studiesSubject.next(
+      this.studiesSubject.value.map((x) =>
+        study.ntcId === x.ntcId ? { ...x, favorite: true } : x)
+    );
     $event.stopPropagation();
   }
 
