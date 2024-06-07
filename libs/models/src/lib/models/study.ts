@@ -35,4 +35,5 @@ export interface StudyFlat {
   overallStatus: string;
   completionDate: Date;
   studyFirstSumbmitDate: Date;
+  favorite?: boolean;
 }
