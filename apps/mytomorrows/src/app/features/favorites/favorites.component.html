@@ -1,4 +1,5 @@
 <div class="mat-elevation-z8">
+  @if (dataSource.data.length > 0) {
     <mat-table [dataSource]="dataSource">  
       <ng-container matColumnDef="NTC ID">
         <mat-header-cell *matHeaderCellDef mat-sort-header>NTC ID</mat-header-cell>
@@ -46,5 +47,7 @@
       <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
 
     </mat-table>
+  } @else {
+    <div>No favorites available</div>
+  }
   </div>
-  

@@ -32,6 +32,7 @@ import {
   MatSlideToggleChange,
   MatSlideToggleModule,
 } from '@angular/material/slide-toggle';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { StudiesResponse, Study, StudyFlat, StudyListState } from '@myt/models';
 import {
@@ -85,7 +86,8 @@ export class StudiesListComponent implements OnInit, OnDestroy {
   constructor(
     @Inject(STUDIES_SERVICE_TOKEN) private readonly service: IStudiesService,
     @Inject(FAVORITES_SERVICE_TOKEN)
-    private readonly favoritesService: IFavoritesService
+    private readonly favoritesService: IFavoritesService,
+    private _snackBar: MatSnackBar
   ) {}
 
   public ngOnInit(): void {
@@ -97,7 +99,6 @@ export class StudiesListComponent implements OnInit, OnDestroy {
         this.stateSubject.next({ data: studiesFlat, loading: false, error: '' });
       });
     this.studiesListState$ = this.stateSubject.asObservable();
-    this.studiesListState$.subscribe(x => console.log(x));
   }
 
   public onAddToFavorite(study: StudyFlat, $event: MouseEvent): void {
@@ -106,6 +107,7 @@ export class StudiesListComponent implements OnInit, OnDestroy {
       ...this.stateSubject.value, data: this.stateSubject.value.data.map((x) =>
         study.ntcId === x.ntcId ? { ...x, favorite: true } : x)
     });
+    this._snackBar.open(`Study ${study.ntcId} added to favorites`, 'dismiss', { duration: 3000, horizontalPosition: 'left', verticalPosition: 'bottom' });
     $event.stopPropagation();
   }
 
