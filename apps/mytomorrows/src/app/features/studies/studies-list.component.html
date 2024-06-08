@@ -1,13 +1,23 @@
-<div style="display: flex; height: 5px;">
-  <mat-progress-bar mode="indeterminate" *ngIf="(studiesListState$ | async)?.loading"></mat-progress-bar>
-</div>
-<div style="padding-bottom: 5x; display: flex; flex-direction: column">
+
+@defer {
   @if ((studiesListState$ | async)) {
-    <mat-slide-toggle color="tertiary" checked="false" (change)="onToggleChange($event)"> &nbsp;Fetch new studies every 5 seconds.</mat-slide-toggle>
-    @if ((studiesListState$ | async)?.data?.length) {
+    <mat-slide-toggle
+      color="tertiary"
+      checked="false"
+      (change)="onToggleChange($event)"
+    >
+      &nbsp;Fetch new studies every 5 seconds.
+    </mat-slide-toggle>
+    @if ((studiesListState$ | async)?.data?.length) { 
+      <div style="display: flex; height: 5px;padding: 5px;">
+        <mat-progress-bar
+          mode="indeterminate"
+          *ngIf="(studiesListState$ | async)?.loading"
+        ></mat-progress-bar> 
+      </div>
       @for (study of (studiesListState$ | async)?.data; track study) {
-        <div style="padding: 5px;"></div>
-          <mat-expansion-panel expanded="false">
+        <div style="padding: 5px"></div>
+        <mat-expansion-panel expanded="false">
           <mat-expansion-panel-header>
             <mat-panel-title>
               <div style="display: flex; width: 100%">
@@ -33,14 +43,23 @@
                     <mat-chip color="warn">{{ study.overallStatus }}</mat-chip>
                   </mat-chip-set>
                 </div>
-                <div style="width: 25%; display: flex; justify-content: center; align-items: center;">
+                <div
+                  style="
+                    width: 25%;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                  "
+                >
                   <button
                     mat-icon-button
                     color="accent"
                     [disabled]="study.favorite"
-                    (click)="onAddToFavorite(study, $event)"   
+                    (click)="onAddToFavorite(study, $event)"
                   >
-                    <mat-icon *ngIf="!study.favorite" color="primary">star_outline</mat-icon>
+                    <mat-icon *ngIf="!study.favorite" color="primary"
+                      >star_outline</mat-icon
+                    >
                     <mat-icon *ngIf="study.favorite" color="primary">star</mat-icon>
                   </button>
                 </div>
@@ -49,7 +68,16 @@
           </mat-expansion-panel-header>
           {{ study.briefTitle }}
         </mat-expansion-panel>
-      } @empty { Empty list of Trials }
+      } @empty { Empty list of Trials } 
     } 
   }
-</div>
+
+} @placeholder {
+  <div style="display: flex; height: 5px">
+    <mat-progress-bar
+      mode="indeterminate"
+      *ngIf="(studiesListState$ | async)?.loading"
+    ></mat-progress-bar>
+  </div>
+ }
+

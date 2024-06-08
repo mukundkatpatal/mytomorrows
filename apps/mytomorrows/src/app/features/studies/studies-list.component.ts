@@ -14,10 +14,12 @@ import {
   BehaviorSubject,
   Observable,
   Subscription,
+  catchError,
   from,
   interval,
   map,
   mergeMap,
+  of,
   switchMap,
   tap,
   toArray,
@@ -58,7 +60,7 @@ import { environment } from '../../app.config';
     MatButtonModule,
     MatSlideToggleModule,
     MatIconModule,
-    MatProgressBarModule
+    MatProgressBarModule,
   ],
   templateUrl: './studies-list.component.html',
   styleUrl: './studies-list.component.scss',
@@ -78,9 +80,11 @@ export class StudiesListComponent implements OnInit, OnDestroy {
   private state: StudyListState = {
     loading: false,
     data: [],
-    error: ''
+    error: '',
   };
-  private readonly stateSubject = new BehaviorSubject<StudyListState>(this.state);
+  private readonly stateSubject = new BehaviorSubject<StudyListState>(
+    this.state
+  );
   public studiesListState$ = this.stateSubject.asObservable();
 
   constructor(
@@ -94,20 +98,44 @@ export class StudiesListComponent implements OnInit, OnDestroy {
     this.stateSubject.next({ ...this.state, loading: true });
     this.service
       .getRandomStudies(this.clinicalTrialApiUrl)
-      .pipe(this.flattenStudies())
+      .pipe(
+        catchError((err) => {
+          this.stateSubject.next({
+            data: [],
+            loading: false,
+            error: err || '',
+          });
+          return of([]);
+        }),
+        this.flattenStudies()
+      )
       .subscribe((studiesFlat: StudyFlat[]) => {
-        this.stateSubject.next({ data: studiesFlat, loading: false, error: '' });
+        this.stateSubject.next({
+          data: studiesFlat,
+          loading: false,
+          error: '',
+        });
       });
-    this.studiesListState$ = this.stateSubject.asObservable();
+    this.stateSubject.subscribe((x) => {
+      if (x.error) {
+        this._snackBar.open(x.error, 'dismiss', { duration: 3000 });
+      }
+    });
   }
 
   public onAddToFavorite(study: StudyFlat, $event: MouseEvent): void {
     this.favoritesService.addFavorite(study);
     this.stateSubject.next({
-      ...this.stateSubject.value, data: this.stateSubject.value.data.map((x) =>
-        study.ntcId === x.ntcId ? { ...x, favorite: true } : x)
+      ...this.stateSubject.value,
+      data: this.stateSubject.value.data.map((x) =>
+        study.ntcId === x.ntcId ? { ...x, favorite: true } : x
+      ),
     });
-    this._snackBar.open(`Study ${study.ntcId} added to favorites`, 'dismiss', { duration: 3000, horizontalPosition: 'left', verticalPosition: 'bottom' });
+    this._snackBar.open(`Study ${study.ntcId} added to favorites`, 'dismiss', {
+      duration: 3000,
+      horizontalPosition: 'left',
+      verticalPosition: 'bottom',
+    });
     $event.stopPropagation();
   }
 
@@ -115,7 +143,12 @@ export class StudiesListComponent implements OnInit, OnDestroy {
     if ($event.checked) {
       this.intervalSubscription = interval(3000)
         .pipe(
-          tap(() => this.stateSubject.next({...this.stateSubject.value,loading: true})),
+          tap(() =>
+            this.stateSubject.next({
+              ...this.stateSubject.value,
+              loading: true,
+            })
+          ),
           switchMap(() =>
             this.service.getRandomStudies(this.clinicalTrialApiUrl, 1)
           ),
@@ -126,7 +159,11 @@ export class StudiesListComponent implements OnInit, OnDestroy {
           if (currentvalues.length > 1) {
             currentvalues.pop();
             currentvalues.unshift(x[0]);
-            this.stateSubject.next({...this.stateSubject.value, data: currentvalues, loading: false});
+            this.stateSubject.next({
+              ...this.stateSubject.value,
+              data: currentvalues,
+              loading: false,
+            });
           }
         });
     } else {
