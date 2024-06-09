@@ -33,14 +33,14 @@ describe('FavoritesServiceArrayStore', () => {
 
   it('should not add a duplicate favorite study', () => {
     const study: StudyFlat = {
-        briefTitle:
-          'The Role of GABA and Neurosteroids in Premenstrual Dysphoric Disorder',
-        completionDate: new Date('2008-12'),
-        ntcId: 'NCT00678574',
-        overallStatus: 'COMPLETED',
-        startDate: new Date('1998-03'),
-        studyFirstSumbmitDate: new Date('2008-05-13'),
-      };
+      briefTitle:
+        'The Role of GABA and Neurosteroids in Premenstrual Dysphoric Disorder',
+      completionDate: new Date('2008-12'),
+      ntcId: 'NCT00678574',
+      overallStatus: 'COMPLETED',
+      startDate: new Date('1998-03'),
+      studyFirstSumbmitDate: new Date('2008-05-13'),
+    };
     service.addFavorite(study);
     service.addFavorite(study);
     service.favorites$.subscribe((favorites) => {
@@ -51,14 +51,14 @@ describe('FavoritesServiceArrayStore', () => {
   it('should not add a favorite study if max count is exceeded', () => {
     const maxCount = 3;
     const study: StudyFlat = {
-        briefTitle:
-          'The Role of GABA and Neurosteroids in Premenstrual Dysphoric Disorder',
-        completionDate: new Date('2008-12'),
-        ntcId: 'NCT00678574',
-        overallStatus: 'COMPLETED',
-        startDate: new Date('1998-03'),
-        studyFirstSumbmitDate: new Date('2008-05-13'),
-      };
+      briefTitle:
+        'The Role of GABA and Neurosteroids in Premenstrual Dysphoric Disorder',
+      completionDate: new Date('2008-12'),
+      ntcId: 'NCT00678574',
+      overallStatus: 'COMPLETED',
+      startDate: new Date('1998-03'),
+      studyFirstSumbmitDate: new Date('2008-05-13'),
+    };
     const studies: StudyFlat[] = [ study, study, study, study, study ];
 
     studies.forEach((study) => service.addFavorite(study, maxCount));
@@ -71,14 +71,14 @@ describe('FavoritesServiceArrayStore', () => {
 
   it('should remove a favorite study', () => {
     const study: StudyFlat = {
-        briefTitle:
-          'The Role of GABA and Neurosteroids in Premenstrual Dysphoric Disorder',
-        completionDate: new Date('2008-12'),
-        ntcId: 'NCT00678574',
-        overallStatus: 'COMPLETED',
-        startDate: new Date('1998-03'),
-        studyFirstSumbmitDate: new Date('2008-05-13'),
-      };
+      briefTitle:
+        'The Role of GABA and Neurosteroids in Premenstrual Dysphoric Disorder',
+      completionDate: new Date('2008-12'),
+      ntcId: 'NCT00678574',
+      overallStatus: 'COMPLETED',
+      startDate: new Date('1998-03'),
+      studyFirstSumbmitDate: new Date('2008-05-13'),
+    };
     service.addFavorite(study);
     service.removeFavorite(study);
 
@@ -89,23 +89,23 @@ describe('FavoritesServiceArrayStore', () => {
 
   it('should not remove a study that is not in the favorites list', () => {
     const study1: StudyFlat = {
-        briefTitle:
-          'The Role of GABA and Neurosteroids in Premenstrual Dysphoric Disorder',
-        completionDate: new Date('2008-12'),
-        ntcId: 'NCT00678574',
-        overallStatus: 'COMPLETED',
-        startDate: new Date('1998-03'),
-        studyFirstSumbmitDate: new Date('2008-05-13'),
-      };
+      briefTitle:
+        'The Role of GABA and Neurosteroids in Premenstrual Dysphoric Disorder',
+      completionDate: new Date('2008-12'),
+      ntcId: 'NCT00678574',
+      overallStatus: 'COMPLETED',
+      startDate: new Date('1998-03'),
+      studyFirstSumbmitDate: new Date('2008-05-13'),
+    };
     const study2: StudyFlat = {
-        briefTitle:
-          'The Role of GABA and Neurosteroids in Premenstrual Dysphoric Disorder',
-        completionDate: new Date('2008-12'),
-        ntcId: 'NCT00123456',
-        overallStatus: 'COMPLETED',
-        startDate: new Date('1998-03'),
-        studyFirstSumbmitDate: new Date('2008-05-13'),
-      };
+      briefTitle:
+        'The Role of GABA and Neurosteroids in Premenstrual Dysphoric Disorder',
+      completionDate: new Date('2008-12'),
+      ntcId: 'NCT00123456',
+      overallStatus: 'COMPLETED',
+      startDate: new Date('1998-03'),
+      studyFirstSumbmitDate: new Date('2008-05-13'),
+    };
     service.addFavorite(study1);
     service.removeFavorite(study2);
 
