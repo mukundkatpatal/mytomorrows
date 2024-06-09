@@ -1,15 +1,15 @@
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { By } from '@angular/platform-browser';
-import { of, throwError } from 'rxjs';
-import { HttpClientTestingModule, provideHttpClientTesting } from '@angular/common/http/testing';
+import { Subscription, of, throwError } from 'rxjs';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { StudiesListComponent } from './studies-list.component';
-import { ApiClientService, FAVORITES_SERVICE_TOKEN, FavoritesServiceArrayStore, IFavoritesService, IStudiesService, STUDIES_SERVICE_TOKEN } from '@myt/services';
-import { StudyFlat } from '@myt/models';
-import { MatSlideToggle, MatSlideToggleChange, MatSlideToggleModule } from '@angular/material/slide-toggle';
+
+import { ApiClientService, FavoritesServiceArrayStore, IFavoritesService, IStudiesService } from '@myt/services';
+import { StudiesResponse, StudyFlat } from '@myt/models';
+
+import { MatSlideToggleChange, MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
@@ -17,6 +17,8 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { provideHttpClient } from '@angular/common/http';
+
+import { StudiesListComponent } from './studies-list.component';
 
 describe.only('StudiesListComponent', () => {
   let component: StudiesListComponent;
@@ -26,6 +28,30 @@ describe.only('StudiesListComponent', () => {
   let mockFavoritesService: Partial<IFavoritesService>;
   let mockSnackBar: MatSnackBar;
 
+  const mockStudyResponse: StudiesResponse = {
+    studies: [
+      {
+        protocolSection: {
+          identificationModule: {
+            nctId: "NCT00062673",
+            briefTitle: "Study of Duloxetine in Elderly Patients With Major Depressive Disorder"
+          },
+          statusModule: {
+            overallStatus: "COMPLETED",
+            startDateStruct: {
+              date: new Date("2003-03")
+            },
+            completionDateStruct: {
+              date: new Date("2004-07")
+            },
+            studyFirstSubmitDate: new Date("2003-06-10")
+          }
+        }
+      }
+    ],
+    nextPageToken: "NF0g5JGPl_Es"
+  };;
+  
   const mockStudy: StudyFlat = {
     briefTitle: 'Study 1',
     completionDate: new Date('2008-12'),
@@ -38,7 +64,17 @@ describe.only('StudiesListComponent', () => {
   beforeEach(async () => {
 
     mockStudiesService = {
-      getRandomStudies: jest.fn().mockReturnValue(of([mockStudy])),
+      getRandomStudies: jest.fn().mockReturnValue(of([
+        mockStudyResponse, 
+        mockStudyResponse, 
+        mockStudyResponse, 
+        mockStudyResponse, 
+        mockStudyResponse, 
+        mockStudyResponse, 
+        mockStudyResponse, 
+        mockStudyResponse, 
+        mockStudyResponse, 
+        mockStudyResponse])),
     };
   
     mockFavoritesService = {
@@ -53,7 +89,6 @@ describe.only('StudiesListComponent', () => {
       imports: [
         StudiesListComponent,
         MatSnackBarModule,
-        HttpClientTestingModule,
         NoopAnimationsModule,
         MatSlideToggleModule,
         MatButtonModule,
@@ -96,10 +131,10 @@ describe.only('StudiesListComponent', () => {
   it('should update state with studies data on success', () => {
     component.ngOnInit();
     fixture.detectChanges();
-    component['stateSubject'].subscribe(() => {
-        expect(component['stateSubject'].value.loading).toBe(false);
-        expect(component['stateSubject'].value.data).toEqual([mockStudy]);
-        expect(component['stateSubject'].value.error).toBe('');
+    component['stateSubject'].subscribe((state) => {
+      expect(state.loading).toBe(false);
+      expect(state.data).toEqual([mockStudy]);
+      expect(state.error).toBe('');
     });
   });
 
@@ -124,14 +159,41 @@ describe.only('StudiesListComponent', () => {
     const toggleEvent = { checked: true } as any;
 
     component.onToggleChange(toggleEvent);
-    fixture.detectChanges();
     jest.advanceTimersByTime(3000);
-
+    component['state'] = { loading: false, data: [mockStudy, mockStudy ], error: ''}
     expect(intervalSpy).toHaveBeenCalledWith(expect.any(Function), 3000);
-    expect(mockStudiesService.getRandomStudies).toHaveBeenCalled();
-    
+    component['stateSubject'].subscribe((state) => {
+      expect(mockStudiesService.getRandomStudies).toHaveBeenCalledWith(component['clinicalTrialApiUrl'], 1);
+      expect(component['flattenStudies']).toHaveBeenCalled();
+      expect(component['stateSubject'].next).toHaveBeenCalledWith( { loading: false, data: state.data, error: '' });
+    });
+   done();
+   jest.useRealTimers();
+  });
+
+  it('should stop interval when toggle is unchecked', () => {
+    const mockSubscription = new Subscription();
+    component['intervalSubscription'] = mockSubscription;
+
+    // Spy on the unsubscribe method
+    const unsubscribeSpy = jest.spyOn(mockSubscription, 'unsubscribe');
+
+    // Simulate the toggle change event with checked set to false
+    const toggleChangeEvent = new MatSlideToggleChange(
+      {} as any,
+      false
+    );
+    component.onToggleChange(toggleChangeEvent);
+    fixture.detectChanges();
+
+    // Assertions
+    expect(unsubscribeSpy).toHaveBeenCalled();
+  });
+
+  afterEach(() => {
     jest.useRealTimers();
-    done();
+    component.ngOnDestroy();
+    fixture.detectChanges();
   });
 
 });

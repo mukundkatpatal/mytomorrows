@@ -22,12 +22,16 @@ export interface StatusModule {
 export interface DateStruct {
   date: Date;
 }
-
+/**
+ * API level response from https://clinicaltrials.gov/api/v2/studies
+ */
 export interface StudiesResponse {
   nextPageToken: string;
   studies: Study[];
 }
-
+/**
+ * View level interface for components.
+ */
 export interface StudyFlat {
   ntcId: string;
   startDate: Date;
@@ -38,6 +42,9 @@ export interface StudyFlat {
   favorite?: boolean;
 }
 
+/**
+ * UI level object representing loader state and error and state of the data
+ */
 export interface StudyListState {
   loading: boolean;
   error: string;

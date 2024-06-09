@@ -6,7 +6,6 @@ import {
   OnInit,
 } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
@@ -206,8 +205,8 @@ export class StudiesListComponent implements OnInit, OnDestroy {
 
   public ngOnDestroy(): void {
     this.intervalSubscription?.unsubscribe();
-    this.destroy$.next();
-    this.destroy$.complete();
+    this.destroy$?.next();
+    this.destroy$?.complete();
   }
 
   private get clinicalTrialApiUrl(): string {

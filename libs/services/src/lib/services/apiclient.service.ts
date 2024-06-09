@@ -25,7 +25,6 @@ export class ApiClientService implements IStudiesService {
     fromDate: string,
     toDate: string
   ): Observable<StudiesResponse> {
-    // debugger;
     apiUrl = `${apiUrl}&filter.advanced=AREA[StudyFirstSubmitDate]RANGE[${fromDate},${toDate}]`;
     return this.httpClient.get<StudiesResponse>(apiUrl).pipe(
       map((response: StudiesResponse) => response),

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { AsyncPipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -24,7 +24,8 @@ import { map, shareReplay } from 'rxjs/operators';
     MatIconModule,
     AsyncPipe,
     RouterModule
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LayoutComponent {
   private breakpointObserver = inject(BreakpointObserver);

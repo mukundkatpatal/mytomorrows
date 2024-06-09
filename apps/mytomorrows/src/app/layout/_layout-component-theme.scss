@@ -16,7 +16,6 @@
     background-color: rgba(mat.get-theme-color($theme, primary-container), 0.75);
   }
   .sidenav-content {
-    // 
     @media (pointer: fine) {
       &::-webkit-scrollbar-thumb {
         background-color: mat.get-theme-color($theme, surface-container-low);

@@ -15,7 +15,7 @@
           *ngIf="(studiesListState$ | async)?.loading"
         ></mat-progress-bar> 
       </div>
-      @for (study of (studiesListState$ | async)?.data; track study) {
+      @for (study of (studiesListState$ | async)?.data; track study.ntcId) {
         <div style="padding: 5px"></div>
         <mat-expansion-panel expanded="false">
           <mat-expansion-panel-header>
@@ -80,4 +80,3 @@
     ></mat-progress-bar>
   </div>
  }
-

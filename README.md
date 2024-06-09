@@ -18,6 +18,19 @@ Run `npx nx serve mytomorrows` to start the development server. Happy coding!
 
 Run `npx nx build mytomorrows` to build the application. The build artifacts are stored in the output directory (e.g. `dist/` or `build/`), ready to be deployed.
 
+To run tests
+
+Run `nx run mytomorrows:test`
+Run `nx run services:test` 
+
+## Objectives And Assumptions
+
+1. Basic application with angular material which fetch random distinct trials.
+2. Add Favorite in the list page
+3. On the favorites page, have a delete favorite.
+4. Toggle on the timer is set for 3000 ms instead of 5 seconds to see the developments early.
+5. While trying to fetching random stories, the assumption is find distinct 10 date range for the first submit date for the range from 1997(API description days during this time the API became active) till today.
+
 ## Running tasks
 
 To execute tasks with Nx use the following syntax:
