@@ -1,6 +1,6 @@
-<div class="mat-elevation-z8">
   @if (dataSource.data.length > 0) {
-    <mat-table [dataSource]="dataSource">  
+    <div class="mat-elevation-z8">
+      <mat-table [dataSource]="dataSource">  
       <ng-container matColumnDef="NTC ID">
         <mat-header-cell *matHeaderCellDef mat-sort-header>NTC ID</mat-header-cell>
         <mat-cell *matCellDef="let element">{{ element.ntcId }}</mat-cell>
@@ -12,7 +12,6 @@
         <mat-cell *matCellDef="let element"> {{ element.completionDate | date:'dd/MM/yyyy' }} </mat-cell>
       </ng-container>
   
-      
       <!-- Start Date Column -->
       <ng-container matColumnDef="Start Date">
         <mat-header-cell *matHeaderCellDef mat-sort-header> Start Date </mat-header-cell>
@@ -47,7 +46,7 @@
       <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
 
     </mat-table>
-  } @else {
-    <div>No favorites available</div>
-  }
   </div>
+  } @else {
+    <div data-test="no-data-found">No favorites available</div>
+  }

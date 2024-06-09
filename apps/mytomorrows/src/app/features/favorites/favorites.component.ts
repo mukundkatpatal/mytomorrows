@@ -3,11 +3,10 @@ import { CommonModule } from '@angular/common';
 
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatSnackBar } from '@angular/material/snack-bar';
-
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
 import { StudyFlat } from '@myt/models';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 import { FAVORITES_SERVICE_TOKEN, FavoritesServiceArrayStore, IFavoritesService } from '@myt/services';
 
 @Component({
@@ -24,7 +23,7 @@ export class FavoritesComponent implements OnInit {
     'NTC ID', 'Completion', 'Overall Status', 'Start Date', 'First Submitted', 'Remove From Favorites'];
   public dataSource!: MatTableDataSource<StudyFlat>;
 
-  constructor(@Inject(FAVORITES_SERVICE_TOKEN)private readonly favoritesService: IFavoritesService, private _snackBar: MatSnackBar) {
+  constructor(@Inject(FAVORITES_SERVICE_TOKEN) public readonly favoritesService: IFavoritesService, private _snackBar: MatSnackBar) {
   }
 
   public ngOnInit(): void {

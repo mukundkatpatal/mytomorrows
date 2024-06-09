@@ -13,6 +13,7 @@ import { CommonModule } from '@angular/common';
 import {
   BehaviorSubject,
   Observable,
+  Subject,
   Subscription,
   catchError,
   from,
@@ -21,6 +22,7 @@ import {
   mergeMap,
   of,
   switchMap,
+  takeUntil,
   tap,
   toArray,
 } from 'rxjs';
@@ -76,6 +78,7 @@ import { environment } from '../../app.config';
 })
 export class StudiesListComponent implements OnInit, OnDestroy {
   private intervalSubscription?: Subscription;
+  private readonly destroy$ = new Subject<void>();
 
   private state: StudyListState = {
     loading: false,
@@ -107,7 +110,8 @@ export class StudiesListComponent implements OnInit, OnDestroy {
           });
           return of([]);
         }),
-        this.flattenStudies()
+        this.flattenStudies(),
+        takeUntil(this.destroy$)
       )
       .subscribe((studiesFlat: StudyFlat[]) => {
         this.stateSubject.next({
@@ -202,6 +206,8 @@ export class StudiesListComponent implements OnInit, OnDestroy {
 
   public ngOnDestroy(): void {
     this.intervalSubscription?.unsubscribe();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private get clinicalTrialApiUrl(): string {
