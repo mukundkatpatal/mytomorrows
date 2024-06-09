@@ -16,5 +16,21 @@ export const appRoutes: Route[] = [
           ),
           title: 'Studies'
       },
-
+      {
+        path: 'home',
+        loadComponent: () =>
+          import('./features/home/home.component').then(
+            (c) => c.HomeComponent
+          ),
+          title: 'Home'
+      },
+      {
+        path: '',
+        pathMatch: 'full',
+        loadComponent: () =>
+          import('./features/home/home.component').then(
+            (c) => c.HomeComponent
+          ),
+          title: 'Home'
+      },
 ];
