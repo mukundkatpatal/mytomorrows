@@ -6,7 +6,7 @@ html,
 body {
   height: 100%;
   @include mat.core();
-  @include mat.all-component-themes(light-theme.$theme);
+  /** Use styles only for the material components used in the mytomorrows app */
   @include mat.system-level-colors(light-theme.$theme);
   @include layout-component-theme.theme(light-theme.$theme);
   margin: 0;

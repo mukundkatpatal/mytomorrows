@@ -9,9 +9,6 @@
   .mat-toolbar {
     background-color: mat.get-theme-color($theme, secondary-container);
   }
-  .mat-mdc-list-item {
-    -webkit-tap-highlight-color: mat.get-theme-color($theme, secondary-container);
-  }
   .sidenav-scroll-wrapper {
     background-color: rgba(mat.get-theme-color($theme, primary-container), 0.75);
   }
