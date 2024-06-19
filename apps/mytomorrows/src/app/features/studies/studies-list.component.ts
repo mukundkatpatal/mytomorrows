@@ -15,15 +15,12 @@ import {
   Subject,
   Subscription,
   catchError,
-  from,
   interval,
   map,
-  mergeMap,
   of,
   switchMap,
   takeUntil,
   tap,
-  toArray,
 } from 'rxjs';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -48,7 +45,6 @@ import {
 } from '@myt/services';
 
 import { environment } from '../../app.config';
-
 @Component({
   selector: 'myt-studies-list',
   standalone: true,
@@ -76,8 +72,10 @@ import { environment } from '../../app.config';
   ],
 })
 export class StudiesListComponent implements OnInit, OnDestroy {
+  public interval = environment.interval;
   private intervalSubscription?: Subscription;
   private readonly destroy$ = new Subject<void>();
+
 
   private state: StudyListState = {
     loading: false,
@@ -121,7 +119,7 @@ export class StudiesListComponent implements OnInit, OnDestroy {
       });
     this.stateSubject.subscribe((x) => {
       if (x.error) {
-        this._snackBar.open(x.error, 'dismiss', { duration: 3000 });
+        this._snackBar.open(x.error, 'dismiss', { duration: environment.snackbarDuration });
       }
     });
   }
@@ -135,17 +133,23 @@ export class StudiesListComponent implements OnInit, OnDestroy {
       ),
     });
     this._snackBar.open(`Study ${study.ntcId} added to favorites`, 'dismiss', {
-      duration: 3000,
+      duration: environment.snackbarDuration,
       horizontalPosition: 'left',
       verticalPosition: 'bottom',
     });
     $event.stopPropagation();
   }
 
+  /**
+   * When toggle is checked is true, it will start an interval that will fetch a random study every 3 seconds
+   * And place it at the beginning of the list. The last study will be removed.
+   * @param $event Material slide toggle change event
+   */
   public onToggleChange($event: MatSlideToggleChange): void {
+    this.intervalSubscription?.unsubscribe(); // unsubscribe if it was already running. (Someone toggled it off and on again)
     if ($event.checked) {
-      this.intervalSubscription = interval(3000)
-        .pipe(
+      this.intervalSubscription = interval(environment.interval)
+        .pipe(takeUntil(this.destroy$),
           tap(() =>
             this.stateSubject.next({
               ...this.stateSubject.value,
@@ -153,7 +157,16 @@ export class StudiesListComponent implements OnInit, OnDestroy {
             })
           ),
           switchMap(() =>
-            this.service.getRandomStudies(this.clinicalTrialApiUrl, 1)
+            this.service.getRandomStudies(this.clinicalTrialApiUrl, 1).pipe(
+              catchError(err => {
+                this.stateSubject.next({
+                  data: [],
+                  loading: false,
+                  error: err || 'Error fetching a random study'
+                });
+                return of([]);
+              })
+            )
           ),
           this.flattenStudies()
         )
@@ -177,30 +190,22 @@ export class StudiesListComponent implements OnInit, OnDestroy {
   private flattenStudies() {
     return (source: Observable<StudiesResponse[]>) =>
       source.pipe(
-        map((x: StudiesResponse[]) =>
-          x.map((y: StudiesResponse) =>
-            y.studies.map((k: Study) => {
-              return {
-                briefTitle: k.protocolSection.identificationModule.briefTitle,
-                ntcId: k.protocolSection.identificationModule.nctId,
-                completionDate:
-                  k?.protocolSection?.statusModule?.completionDateStruct?.date,
-                overallStatus: k.protocolSection.statusModule.overallStatus,
-                startDate:
-                  k?.protocolSection?.statusModule?.startDateStruct?.date,
-                studyFirstSumbmitDate:
-                  k?.protocolSection?.statusModule?.studyFirstSubmitDate,
-              } as StudyFlat;
-            })
-          )
+        map((studiesResponses: StudiesResponse[]) =>
+          studiesResponses.flatMap((studyResponse: StudiesResponse) =>
+            studyResponse.studies.map((studyResponse) => this.transformStudy(studyResponse))
         ),
-        mergeMap((arrays) =>
-          from(arrays).pipe(
-            mergeMap((innerArray) => from(innerArray)),
-            toArray()
-          )
-        )
-      );
+    ));
+  }
+
+  private transformStudy(study: Study): StudyFlat {
+    return {
+      briefTitle: study.protocolSection.identificationModule.briefTitle,
+      ntcId: study.protocolSection.identificationModule.nctId,
+      completionDate: study?.protocolSection?.statusModule?.completionDateStruct?.date,
+      overallStatus: study.protocolSection.statusModule.overallStatus,
+      startDate: study?.protocolSection?.statusModule?.startDateStruct?.date,
+      studyFirstSumbmitDate: study?.protocolSection?.statusModule?.studyFirstSubmitDate,
+    };
   }
 
   public ngOnDestroy(): void {

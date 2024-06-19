@@ -6,7 +6,7 @@
       checked="false"
       (change)="onToggleChange($event)"
     >
-      &nbsp;Fetch new studies every 5 seconds.
+      &nbsp;Fetch new studies every {{ interval/1000 }} seconds.
     </mat-slide-toggle>
     @if ((studiesListState$ | async)?.data?.length) { 
       <div style="display: flex; height: 5px;padding: 5px;">

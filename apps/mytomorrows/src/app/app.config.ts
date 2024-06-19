@@ -17,5 +17,7 @@ export const environment = {
   production: true,
   clinicalTrialBaseUrl: 'https://clinicaltrials.gov/api/',
   clinicalTrialUrlVersion: 'v2/',
-  studyResource: 'studies'
+  studyResource: 'studies',
+  interval: 5000,
+  snackbarDuration: 3000
 }
