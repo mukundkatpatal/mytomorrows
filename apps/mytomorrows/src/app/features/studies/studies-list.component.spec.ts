@@ -159,9 +159,9 @@ describe.only('StudiesListComponent', () => {
     const toggleEvent = { checked: true } as any;
 
     component.onToggleChange(toggleEvent);
-    jest.advanceTimersByTime(3000);
+    jest.advanceTimersByTime(5000);
     component['state'] = { loading: false, data: [mockStudy, mockStudy ], error: ''}
-    expect(intervalSpy).toHaveBeenCalledWith(expect.any(Function), 3000);
+    expect(intervalSpy).toHaveBeenCalledWith(expect.any(Function), 5000);
     component['stateSubject'].subscribe((state) => {
       expect(mockStudiesService.getRandomStudies).toHaveBeenCalledWith(component['clinicalTrialApiUrl'], 1);
       expect(component['flattenStudies']).toHaveBeenCalled();

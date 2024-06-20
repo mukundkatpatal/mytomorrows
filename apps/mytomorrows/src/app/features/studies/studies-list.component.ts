@@ -148,7 +148,7 @@ export class StudiesListComponent implements OnInit, OnDestroy {
   public onToggleChange($event: MatSlideToggleChange): void {
     this.intervalSubscription?.unsubscribe(); // unsubscribe if it was already running. (Someone toggled it off and on again)
     if ($event.checked) {
-      this.intervalSubscription = interval(environment.interval)
+      this.intervalSubscription = interval(5000)
         .pipe(takeUntil(this.destroy$),
           tap(() =>
             this.stateSubject.next({
@@ -158,11 +158,11 @@ export class StudiesListComponent implements OnInit, OnDestroy {
           ),
           switchMap(() =>
             this.service.getRandomStudies(this.clinicalTrialApiUrl, 1).pipe(
-              catchError(err => {
+              catchError((err: Error) => {
                 this.stateSubject.next({
                   data: [],
                   loading: false,
-                  error: err || 'Error fetching a random study'
+                  error: err.message || ': Error fetching a random study'
                 });
                 return of([]);
               })
@@ -170,7 +170,7 @@ export class StudiesListComponent implements OnInit, OnDestroy {
           ),
           this.flattenStudies()
         )
-        .subscribe((x) => {
+        .subscribe((x: StudyFlat[]) => {
           const currentvalues = this.stateSubject.value.data;
           if (currentvalues.length > 1) {
             currentvalues.pop();
