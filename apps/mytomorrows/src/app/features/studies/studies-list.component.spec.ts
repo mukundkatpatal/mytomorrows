@@ -5,7 +5,7 @@ import { Subscription, of, throwError } from 'rxjs';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
-import { ApiClientService, FavoritesServiceArrayStore, IFavoritesService, IStudiesService } from '@myt/services';
+import { ApiClientService, FavoritesArrayStoreService, IFavoritesService, IStudiesService } from '@myt/services';
 import { StudiesResponse, StudyFlat } from '@myt/models';
 
 import { MatSlideToggleChange, MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -102,7 +102,7 @@ describe.only('StudiesListComponent', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         { provide: ApiClientService, useValue: mockStudiesService },
-        { provide: FavoritesServiceArrayStore, useValue: mockFavoritesService },
+        { provide: FavoritesArrayStoreService, useValue: mockFavoritesService },
         { provide: MatSnackBar, useValue: mockSnackBar },
       ]
     }).compileComponents();

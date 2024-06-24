@@ -5,7 +5,6 @@ import {
   OnDestroy,
   OnInit,
 } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
@@ -37,7 +36,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { StudiesResponse, Study, StudyFlat, StudyListState } from '@myt/models';
 import {
   FAVORITES_SERVICE_TOKEN,
-  FavoritesServiceArrayStore,
+  FavoritesArrayStoreService,
   ApiClientService,
   IFavoritesService,
   STUDIES_SERVICE_TOKEN,
@@ -63,19 +62,17 @@ import { environment } from '../../app.config';
   styleUrl: './studies-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
-    HttpClient,
     {
       provide: FAVORITES_SERVICE_TOKEN,
-      useExisting: FavoritesServiceArrayStore,
+      useExisting: FavoritesArrayStoreService,
     },
     { provide: STUDIES_SERVICE_TOKEN, useClass: ApiClientService },
   ],
 })
 export class StudiesListComponent implements OnInit, OnDestroy {
-  public interval = environment.interval;
-  private intervalSubscription?: Subscription;
+  public readonly interval = environment.interval;
+  private intervalSubscription: Subscription = new Subscription();
   private readonly destroy$ = new Subject<void>();
-
 
   private state: StudyListState = {
     loading: false,
@@ -88,22 +85,22 @@ export class StudiesListComponent implements OnInit, OnDestroy {
   public studiesListState$ = this.stateSubject.asObservable();
 
   constructor(
-    @Inject(STUDIES_SERVICE_TOKEN) private readonly service: IStudiesService,
+    @Inject(STUDIES_SERVICE_TOKEN) private readonly studiesService: IStudiesService,
     @Inject(FAVORITES_SERVICE_TOKEN)
     private readonly favoritesService: IFavoritesService,
-    private _snackBar: MatSnackBar
+    private readonly snackBar: MatSnackBar
   ) {}
 
   public ngOnInit(): void {
     this.stateSubject.next({ ...this.state, loading: true });
-    this.service
+    this.studiesService
       .getRandomStudies(this.clinicalTrialApiUrl)
       .pipe(
         catchError((err) => {
           this.stateSubject.next({
             data: [],
             loading: false,
-            error: err || '',
+            error: err || err.message || 'Error fetching studies',
           });
           return of([]);
         }),
@@ -117,9 +114,9 @@ export class StudiesListComponent implements OnInit, OnDestroy {
           error: '',
         });
       });
-    this.stateSubject.subscribe((x) => {
+    this.stateSubject.pipe(takeUntil(this.destroy$)).subscribe((x) => {
       if (x.error) {
-        this._snackBar.open(x.error, 'dismiss', { duration: environment.snackbarDuration });
+        this.snackBar.open(x.error, 'dismiss', { duration: environment.snackbarDuration });
       }
     });
   }
@@ -132,7 +129,7 @@ export class StudiesListComponent implements OnInit, OnDestroy {
         study.ntcId === x.ntcId ? { ...x, favorite: true } : x
       ),
     });
-    this._snackBar.open(`Study ${study.ntcId} added to favorites`, 'dismiss', {
+    this.snackBar.open(`Study ${study.ntcId} added to favorites`, 'dismiss', {
       duration: environment.snackbarDuration,
       horizontalPosition: 'left',
       verticalPosition: 'bottom',
@@ -148,7 +145,7 @@ export class StudiesListComponent implements OnInit, OnDestroy {
   public onToggleChange($event: MatSlideToggleChange): void {
     this.intervalSubscription?.unsubscribe(); // unsubscribe if it was already running. (Someone toggled it off and on again)
     if ($event.checked) {
-      this.intervalSubscription = interval(5000)
+      this.intervalSubscription = interval(environment.interval)
         .pipe(takeUntil(this.destroy$),
           tap(() =>
             this.stateSubject.next({
@@ -157,7 +154,7 @@ export class StudiesListComponent implements OnInit, OnDestroy {
             })
           ),
           switchMap(() =>
-            this.service.getRandomStudies(this.clinicalTrialApiUrl, 1).pipe(
+            this.studiesService.getRandomStudies(this.clinicalTrialApiUrl, 1).pipe(
               catchError((err: Error) => {
                 this.stateSubject.next({
                   data: [],

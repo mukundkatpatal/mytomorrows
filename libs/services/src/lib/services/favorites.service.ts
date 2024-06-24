@@ -15,7 +15,7 @@ export const FAVORITES_SERVICE_TOKEN = new InjectionToken<IFavoritesService>(
 @Injectable({
   providedIn: 'root',
 })
-export class FavoritesServiceArrayStore implements IFavoritesService {
+export class FavoritesArrayStoreService implements IFavoritesService {
   private readonly _favoriteStudies$ = new BehaviorSubject<StudyFlat[]>([]);
 
   public get favorites$(): Observable<StudyFlat[]> {

@@ -1,5 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
@@ -8,9 +7,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
-import { Observable } from 'rxjs';
-import { map, shareReplay } from 'rxjs/operators';
-
 @Component({
   selector: 'myt-layout',
   templateUrl: './layout.component.html',
@@ -28,11 +24,5 @@ import { map, shareReplay } from 'rxjs/operators';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LayoutComponent {
-  private breakpointObserver = inject(BreakpointObserver);
-
-  isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
-    .pipe(
-      map(result => result.matches),
-      shareReplay()
-    );
+  
 }

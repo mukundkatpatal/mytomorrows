@@ -23,7 +23,7 @@ mat-sidenav-content {
 }
 
 .sidenav-scroll-wrapper {
-  height: calc(100dvh - 64px - 16px);
+  height: calc(100vh - 64px - 16px);
   overflow: auto;
   border-radius: 16px;
   box-sizing: border-box;
@@ -56,5 +56,21 @@ mat-sidenav-content {
   .sidenav-content {
     overflow-y: visible;
     padding: 8px;
+  }
+}
+
+.flex-container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  .link-container {
+    width: 45%;
+  }
+  .logo-container {
+    width: 55%;
+  }
+  .logo-img {
+    width: 175px;
+    height: 24px;
   }
 }

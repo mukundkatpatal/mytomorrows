@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FavoritesComponent } from './favorites.component';
-import { FavoritesServiceArrayStore, IFavoritesService } from '@myt/services';
+import { FavoritesArrayStoreService, IFavoritesService } from '@myt/services';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { StudyFlat } from '@myt/models';
 import { By } from '@angular/platform-browser';
@@ -53,7 +53,7 @@ describe('FavoritesComponent', () => {
       imports: [MatTableModule, MatButtonModule, MatIconModule, MatSnackBarModule, FavoritesComponent],
       providers: [
         {
-          provide: FavoritesServiceArrayStore,
+          provide: FavoritesArrayStoreService,
           useValue: mockFavoritesService
         },
         { provide: MatSnackBar, useValue: mockSnackBar }
@@ -68,7 +68,7 @@ describe('FavoritesComponent', () => {
 
   it('should initialize dataSource with data from the favoritesService', () => {
 
-    component.favoritesService.favorites$.subscribe(x =>
+    component['favoritesService'].favorites$.subscribe(x =>
       expect(component.dataSource.data.length).toEqual(x.length));
   });
 
@@ -81,14 +81,14 @@ describe('FavoritesComponent', () => {
 
   it('should call removeFavorite and show a snack bar when onRemoveFavorite is called', () => {
     const study = mockData[0];
-    component.onRemoveFavorite(study);
-    expect(component.favoritesService.removeFavorite).toHaveBeenCalledWith(study);
-    expect(mockSnackBar.open).toHaveBeenCalledWith(`Study ${study.ntcId} removed from favorites`, 'dismiss', { duration: 3000, horizontalPosition: 'left', verticalPosition: 'bottom' });
+    component.onRemove(study);
+    expect(component['favoritesService'].removeFavorite).toHaveBeenCalledWith(study);
+    expect(mockSnackBar.open).toHaveBeenCalledWith(`Study ${study.ntcId} has been removed from the favorites`, 'dismiss', { duration: 3000, horizontalPosition: 'left', verticalPosition: 'bottom' });
   });
 
   it('should display "No favorites available" message when dataSource is empty', () => {
     jest.spyOn(mockFavoritesService, "favorites$", "get").mockReturnValue(of([]));
-    component.favoritesService.favorites$.subscribe(()=> {
+    component['favoritesService'].favorites$.subscribe(()=> {
       component.ngOnInit();
       fixture.detectChanges();
       const element = fixture.debugElement.query(By.css('[data-test="no-data-found"]')).nativeElement;

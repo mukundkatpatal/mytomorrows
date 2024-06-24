@@ -1,4 +1,46 @@
 label {
-    font-weight: normal;
-    line-height: 40px;
+  font-weight: normal;
+  line-height: 40px;
+}
+
+.flex-container {
+  display: flex;
+}
+
+.flex-full-width {
+  display: flex;
+  width: 100%;
+  .width-quarter {
+    width: 25%;
+  }
+  .width-three-quarters {
+    display: flex;
+    width: 75%;
+  }
+  .width-thirty {
+    width: 30%;
+  }
+  .width-ten {
+    width: 10%;
+  }
+  .width-twenty {
+    width: 20%;
+  }
+}
+
+.progress-bar-container {
+  display: flex;
+  height: 5px;
+  padding: 5px;
+}
+
+mat-expansion-panel {
+  margin-bottom: 10px;
+  background-color: var(--sys-secondary-container);
+}
+
+.centered-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

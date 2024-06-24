@@ -15,7 +15,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { StudyFlat } from '@myt/models';
 import {
   FAVORITES_SERVICE_TOKEN,
-  FavoritesServiceArrayStore,
+  FavoritesArrayStoreService,
   IFavoritesService,
 } from '@myt/services';
 import { environment } from '../../app.config';
@@ -31,7 +31,7 @@ import { Subject, takeUntil } from 'rxjs';
   providers: [
     {
       provide: FAVORITES_SERVICE_TOKEN,
-      useExisting: FavoritesServiceArrayStore,
+      useExisting: FavoritesArrayStoreService,
     },
   ],
 })
@@ -48,20 +48,20 @@ export class FavoritesComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   constructor(
     @Inject(FAVORITES_SERVICE_TOKEN)
-    public readonly favoritesService: IFavoritesService,
-    private _snackBar: MatSnackBar
+    private readonly favoritesService: IFavoritesService,
+    private readonly snackBar: MatSnackBar
   ) {}
 
   public ngOnInit(): void {
     this.favoritesService.favorites$
       .pipe(takeUntil(this.destroy$))
-      .subscribe((x) => (this.dataSource.data = x));
+      .subscribe((studies: StudyFlat[]) => (this.dataSource.data = studies));
   }
 
-  public onRemoveFavorite(study: StudyFlat): void {
+  public onRemove(study: StudyFlat): void {
     this.favoritesService.removeFavorite(study);
-    this._snackBar.open(
-      `Study ${study.ntcId} removed from favorites`,
+    this.snackBar.open(
+      `Study ${study.ntcId} has been removed from the favorites`,
       'dismiss',
       {
         duration: environment.snackbarDuration,
@@ -70,7 +70,9 @@ export class FavoritesComponent implements OnInit, OnDestroy {
       }
     );
   }
-
+  /**
+  * This can be a in a base class
+  */
   public ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();

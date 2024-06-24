@@ -1,15 +1,15 @@
 import { TestBed } from '@angular/core/testing';
-import { FavoritesServiceArrayStore } from './favorites.service';
+import { FavoritesArrayStoreService } from './favorites.service';
 import { StudyFlat } from '@myt/models';
 
-describe('FavoritesServiceArrayStore', () => {
-  let service: FavoritesServiceArrayStore;
+describe('FavoritesArrayStoreService', () => {
+  let service: FavoritesArrayStoreService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [FavoritesServiceArrayStore],
+      providers: [FavoritesArrayStoreService],
     });
-    service = TestBed.inject(FavoritesServiceArrayStore);
+    service = TestBed.inject(FavoritesArrayStoreService);
   });
 
   it('should add a favorite study', () => {
