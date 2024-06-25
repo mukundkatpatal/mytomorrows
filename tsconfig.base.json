@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@myt/components": ["libs/components/src/index.ts"],
       "@myt/models": ["libs/models/src/index.ts"],
       "@myt/services": ["libs/services/src/index.ts"]
     }

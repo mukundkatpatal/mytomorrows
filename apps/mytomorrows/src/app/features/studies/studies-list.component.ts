@@ -44,6 +44,7 @@ import {
 } from '@myt/services';
 
 import { environment } from '../../app.config';
+import { BaseComponent } from '@myt/components';
 @Component({
   selector: 'myt-studies-list',
   standalone: true,
@@ -69,7 +70,7 @@ import { environment } from '../../app.config';
     { provide: STUDIES_SERVICE_TOKEN, useClass: ApiClientService },
   ],
 })
-export class StudiesListComponent implements OnInit, OnDestroy {
+export class StudiesListComponent extends BaseComponent implements OnInit, OnDestroy {
   public readonly interval = environment.interval;
   private intervalSubscription: Subscription = new Subscription();
   private readonly destroy$ = new Subject<void>();
@@ -89,7 +90,9 @@ export class StudiesListComponent implements OnInit, OnDestroy {
     @Inject(FAVORITES_SERVICE_TOKEN)
     private readonly favoritesService: IFavoritesService,
     private readonly snackBar: MatSnackBar
-  ) {}
+  ) {
+    super();
+  }
 
   public ngOnInit(): void {
     this.stateSubject.next({ ...this.state, loading: true });
@@ -203,12 +206,6 @@ export class StudiesListComponent implements OnInit, OnDestroy {
       startDate: study?.protocolSection?.statusModule?.startDateStruct?.date,
       studyFirstSumbmitDate: study?.protocolSection?.statusModule?.studyFirstSubmitDate,
     };
-  }
-
-  public ngOnDestroy(): void {
-    this.intervalSubscription?.unsubscribe();
-    this.destroy$?.next();
-    this.destroy$?.complete();
   }
 
   private get clinicalTrialApiUrl(): string {

@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   Inject,
-  OnDestroy,
   OnInit,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -19,7 +18,8 @@ import {
   IFavoritesService,
 } from '@myt/services';
 import { environment } from '../../app.config';
-import { Subject, takeUntil } from 'rxjs';
+import { takeUntil } from 'rxjs';
+import { BaseComponent } from '@myt/components'
 
 @Component({
   selector: 'myt-favorites',
@@ -35,7 +35,7 @@ import { Subject, takeUntil } from 'rxjs';
     },
   ],
 })
-export class FavoritesComponent implements OnInit, OnDestroy {
+export class FavoritesComponent extends BaseComponent implements OnInit {
   public displayedColumns: string[] = [
     'NTC ID',
     'Completion',
@@ -45,16 +45,18 @@ export class FavoritesComponent implements OnInit, OnDestroy {
     'Remove From Favorites',
   ];
   public dataSource = new MatTableDataSource<StudyFlat>();
-  private destroy$ = new Subject<void>();
+  
   constructor(
     @Inject(FAVORITES_SERVICE_TOKEN)
     private readonly favoritesService: IFavoritesService,
     private readonly snackBar: MatSnackBar
-  ) {}
+  ) {
+    super();
+  }
 
   public ngOnInit(): void {
     this.favoritesService.favorites$
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntil(this.destroyed$))
       .subscribe((studies: StudyFlat[]) => (this.dataSource.data = studies));
   }
 
@@ -69,12 +71,5 @@ export class FavoritesComponent implements OnInit, OnDestroy {
         verticalPosition: 'bottom',
       }
     );
-  }
-  /**
-  * This can be a in a base class
-  */
-  public ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
   }
 }
